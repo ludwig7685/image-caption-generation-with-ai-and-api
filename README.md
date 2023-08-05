@@ -13,7 +13,7 @@
 
 ---
 
-### Could Be Used to Make a hCaptcha Solver or Suit Your Needs
+### Could Be Used to Make a hCaptcha Solver or What ever Your Needs are!
 This project could be utilized for various purposes, such as creating a hCaptcha solver or adapting it to your specific needs.
 
 ---
