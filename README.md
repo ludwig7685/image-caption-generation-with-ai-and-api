@@ -18,6 +18,14 @@ This project could be utilized for various purposes, such as creating a hCaptcha
 
 ---
 
+### Install:
+pip install Flask Pillow requests transformers
+
+also might need:
+pip install torch torchvision torchaudio
+
+---
+
 Feel free to create an issue if you have any questions or suggestions!
 
 AI Model Source: [Salesforce/blip-image-captioning-large](https://huggingface.co/Salesforce/blip-image-captioning-large)
