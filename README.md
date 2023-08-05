@@ -8,12 +8,12 @@
 
 ---
 
-## API Integration!
+### API Integration!
 - Send images to the API and receive generated captions along with image names.
 
 ---
 
-## Could Be Used to Make a hCaptcha Solver or What ever Your Needs are!
+### Could Be Used to Make a hCaptcha Solver or What ever Your Needs are!
 This project could be utilized for various purposes, such as creating a hCaptcha solver or adapting it to your specific needs.
 
 ---
