@@ -19,12 +19,12 @@ This project could be utilized for various purposes, such as creating a hCaptcha
 ---
 
 ### Install:
-pip install Flask Pillow requests transformers
 
-also might need:
-pip install torch torchvision torchaudio
+Copy and paste the following command to install the required packages:
 
----
+```bash
+pip install Flask Pillow requests transformers torch torchvision torchaudio
+```
 
 Feel free to create an issue if you have any questions or suggestions!
 
