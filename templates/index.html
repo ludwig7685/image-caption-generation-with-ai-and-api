@@ -3,18 +3,27 @@
 <head>
     <title>Image Caption Generator</title>
 </head>
-<body>
+<body height="100%">
     <h1>Image Caption Generator</h1>
     <form action="/" method="POST" enctype="multipart/form-data">
-        <input type="file" name="image">
-        <input type="submit" value="Generate Caption">
+        <input type="file" name="image"><br><br>
+        <input type="submit" value="Generate Caption"><br>
     </form>
+
+    {% if image %}
+    <h2>Image</h2>
+    <img src="data:image/jpeg;base64,{{ image }}" height="200" width="200", padding="20">
+    {% endif %}
+
     {% if caption %}
-    <h2>Generated Caption:</h2>
-    <p>{{ caption }}</p>
+    <h2>Caption</h2>
+    <p>"{{ caption }}"</p>
+    {% endif %}
+
     {% if generation_message %}
-    <p>{{ generation_message }}</p>
+    <p><i>{{ generation_message }}</i></p>
     {% endif %}
-    {% endif %}
+
+    
 </body>
 </html>

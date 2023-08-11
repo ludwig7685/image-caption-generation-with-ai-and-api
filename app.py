@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, jsonify
-from PIL import Image
+
 from transformers import BlipProcessor, BlipForConditionalGeneration
+from PIL import Image
+from base64 import b64encode
+from io import BytesIO
 import time
 
 app = Flask(__name__)
@@ -8,46 +11,47 @@ app = Flask(__name__)
 processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
 model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
 
-last_generation_time = None  # Variable to store the time of the last caption generation
-
 def generate_caption(image):
-    global last_generation_time
+    with Image.open(image) as img:
+        raw_image = img.convert("RGB")
 
-    if not image:
-        return "No image uploaded"
+        inputs = processor(raw_image, return_tensors="pt", max_new_tokens=100)
 
-    try:
-        with Image.open(image) as img:
-            raw_image = img.convert("RGB")
+        start_time = time.time()
+        out = model.generate(**inputs)
+        generation_time = time.time() - start_time
 
-            # Unconditional image captioning
-            inputs = processor(raw_image, return_tensors="pt", max_length=100)  # Set max length to 100
+        caption = processor.decode(out[0], skip_special_tokens=True)
+        return caption, generation_time
 
-            start_time = time.time()  # Record the start time
-            out = model.generate(**inputs)
-            end_time = time.time()  # Record the end time
+def convert_image_to_base64(image):
+    pil_image = Image.open(image).convert('RGB')
+    buffered = BytesIO()
+    pil_image.save(buffered, format="JPEG")
+    img_data = b64encode(buffered.getvalue()).decode('utf-8')
 
-            last_generation_time = end_time - start_time  # Calculate generation time
-            caption = processor.decode(out[0], skip_special_tokens=True)
-
-            return caption
-    except Exception as e:
-        return f"Error processing image: {e}"
+    return img_data
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    global last_generation_time
-
-    caption = ""
-    generation_message = ""
-
     if request.method == 'POST':
-        if 'image' in request.files:
-            image = request.files['image']
-            caption = generate_caption(image)
-            generation_message = f"Caption generated in {last_generation_time:.2f} seconds."
+        image = request.files['image']
 
-    return render_template('index.html', caption=caption, generation_message=generation_message)
+        try:
+            image_base64 = convert_image_to_base64(image)
+        except Exception as e:
+            return render_template('index.html', generation_message="Error processing image")
+        
+        try:
+            caption, generation_time = generate_caption(image)
+        except Exception as e:
+            return render_template('index.html', generation_message="Error generating Captcha")
+
+        generation_message = f"generated in {generation_time:.2f} seconds" if generation_time is not None else "generated in -.-- seconds"
+
+        return render_template('index.html', image=image_base64, caption=caption, generation_message=generation_message)
+    
+    return render_template('index.html')
 
 @app.route('/api/generate_caption', methods=['POST'])
 def generate_caption_api():
